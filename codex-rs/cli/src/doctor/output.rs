@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Renders doctor reports for terminal users.
 //!
 //! The renderer is intentionally separate from check construction so the JSON
@@ -24,7 +25,7 @@ const SEPARATOR_WIDTH: usize = 61;
 
 const GROUPS: &[OutputGroup] = &[
     OutputGroup {
-        title: "Environment",
+        title: tr!("environment-label"),
         keys: &[
             "system", "runtime", "install", "search", "git", "terminal", "title", "state",
             "threads",

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! The textarea owns editable composer text, placeholder elements, cursor/wrap state, and a
 //! single-entry kill buffer.
 //!
@@ -330,7 +331,7 @@ impl TextArea {
             return None;
         }
         Some(match self.vim_mode {
-            VimMode::Normal => "Normal",
+            VimMode::Normal => tr!("normal-mode"),
             VimMode::Insert => "Insert",
         })
     }

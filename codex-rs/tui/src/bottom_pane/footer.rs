@@ -325,13 +325,13 @@ fn left_side_line(
         SummaryHintKind::Shortcuts => {
             if let Some(key) = key_hints.toggle_shortcuts {
                 line.push_span(key);
-                line.push_span(" for shortcuts".dim());
+                line.push_span(tr!("shortcuts-label").dim());
             }
         }
         SummaryHintKind::QueueMessage => {
             if let Some(key) = key_hints.queue {
                 line.push_span(key);
-                line.push_span(" to queue message".dim());
+                line.push_span(tr!("queue-message").dim());
             }
         }
         SummaryHintKind::QueueShort => {
@@ -888,7 +888,7 @@ fn esc_hint_line(esc_backtrack_hint: bool) -> Line<'static> {
             esc.into(),
             " ".into(),
             esc.into(),
-            " to edit previous message".into(),
+            tr!("edit-previous").into(),
         ])
         .dim()
     }
@@ -1106,7 +1106,7 @@ impl ShortcutDescriptor {
                 if state.is_task_running || state.queue_submissions {
                     line.push_span(" to queue message");
                 } else {
-                    line.push_span(" to submit message");
+                    line.push_span(tr!("submit-message"));
                 }
             }
             ShortcutId::EditPrevious => {
@@ -1122,9 +1122,9 @@ impl ShortcutDescriptor {
             }
             ShortcutId::Quit => {
                 if state.is_task_running {
-                    line.push_span(" to interrupt");
+                    line.push_span(tr!("interrupt-label"));
                 } else {
-                    line.push_span(" to exit");
+                    line.push_span(tr!("exit-label"));
                 }
             }
             _ => line.push_span(self.label),
@@ -1141,7 +1141,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for commands",
+        label: tr!("commands-label"),
     },
     ShortcutDescriptor {
         id: ShortcutId::ShellCommands,
@@ -1150,7 +1150,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for shell commands",
+        label: tr!("shell-commands"),
     },
     ShortcutDescriptor {
         id: ShortcutId::InsertNewline,
@@ -1165,7 +1165,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             },
         ],
         prefix: "",
-        label: " for newline",
+        label: tr!("newline-label"),
     },
     ShortcutDescriptor {
         id: ShortcutId::QueueMessageTab,
@@ -1183,7 +1183,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for file paths",
+        label: tr!("file-paths"),
     },
     ShortcutDescriptor {
         id: ShortcutId::PasteImage,
@@ -1200,7 +1200,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             },
         ],
         prefix: "",
-        label: " to paste images",
+        label: tr!("paste-images"),
     },
     ShortcutDescriptor {
         id: ShortcutId::ExternalEditor,
@@ -1209,7 +1209,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to edit in external editor",
+        label: tr!("ext-editor"),
     },
     ShortcutDescriptor {
         id: ShortcutId::EditPrevious,
@@ -1227,7 +1227,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " search history",
+        label: tr!("search-history"),
     },
     ShortcutDescriptor {
         id: ShortcutId::Quit,
@@ -1245,7 +1245,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to view transcript",
+        label: tr!("view-transcript"),
     },
     ShortcutDescriptor {
         id: ShortcutId::ChangeMode,
@@ -1254,7 +1254,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::WhenCollaborationModesEnabled,
         }],
         prefix: "",
-        label: " to change mode",
+        label: tr!("change-mode"),
     },
     ShortcutDescriptor {
         id: ShortcutId::ReasoningDown,
@@ -1263,7 +1263,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " reasoning down",
+        label: tr!("reasoning-down"),
     },
     ShortcutDescriptor {
         id: ShortcutId::ReasoningUp,
@@ -1272,7 +1272,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " reasoning up",
+        label: tr!("reasoning-up"),
     },
 ];
 

@@ -52,10 +52,10 @@ const NOTES_PLACEHOLDER: &str = "Add notes";
 const ANSWER_PLACEHOLDER: &str = "Type your answer (optional)";
 // Keep in sync with ChatComposer's minimum composer height.
 const MIN_COMPOSER_HEIGHT: u16 = 3;
-const SELECT_OPTION_PLACEHOLDER: &str = "Select an option to add notes";
+const SELECT_OPTION_PLACEHOLDER: &str = tr!("select-option-notes");
 pub(super) const TIP_SEPARATOR: &str = " | ";
 pub(super) const DESIRED_SPACERS_BETWEEN_SECTIONS: u16 = 2;
-const OTHER_OPTION_LABEL: &str = "None of the above";
+const OTHER_OPTION_LABEL: &str = tr!("none-of-above");
 const OTHER_OPTION_DESCRIPTION: &str = "Optionally, add details in notes (tab).";
 const UNANSWERED_CONFIRM_TITLE: &str = "Submit with unanswered questions?";
 const UNANSWERED_CONFIRM_GO_BACK: &str = "Go back";
@@ -1602,19 +1602,19 @@ mod tests {
             is_secret: false,
             options: Some(vec![
                 ToolRequestUserInputOption {
-                    label: "Discuss a code change".to_string(),
+                    label: tr!("discuss-change").to_string(),
                     description:
                         "Walk through a plan, then implement it together with careful checks."
                             .to_string(),
                 },
                 ToolRequestUserInputOption {
-                    label: "Run targeted tests".to_string(),
+                    label: tr!("run-tests").to_string(),
                     description:
                         "Pick the most relevant crate and validate the current behavior first."
                             .to_string(),
                 },
                 ToolRequestUserInputOption {
-                    label: "Review the diff".to_string(),
+                    label: tr!("review-diff").to_string(),
                     description:
                         "Summarize the changes and highlight the most important risks and gaps."
                             .to_string(),
@@ -3506,23 +3506,23 @@ mod tests {
                     is_secret: false,
                     options: Some(vec![
                         ToolRequestUserInputOption {
-                            label: "Discuss a code change (Recommended)".to_string(),
+                            label: tr!("discuss-change-rec").to_string(),
                             description: "Walk through a plan and edit code together.".to_string(),
                         },
                         ToolRequestUserInputOption {
-                            label: "Run tests".to_string(),
+                            label: tr!("run-tests").to_string(),
                             description: "Pick a crate and run its tests.".to_string(),
                         },
                         ToolRequestUserInputOption {
-                            label: "Review a diff".to_string(),
+                            label: tr!("review-diff").to_string(),
                             description: "Summarize or review current changes.".to_string(),
                         },
                         ToolRequestUserInputOption {
-                            label: "Refactor".to_string(),
+                            label: tr!("refactor-label").to_string(),
                             description: "Tighten structure and remove dead code.".to_string(),
                         },
                         ToolRequestUserInputOption {
-                            label: "Ship it".to_string(),
+                            label: tr!("ship-it").to_string(),
                             description: "Finalize and open a PR.".to_string(),
                         },
                     ]),

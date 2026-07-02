@@ -1,3 +1,4 @@
+use codex_l10n;
 use std::path::PathBuf;
 
 use super::ChatWidget;
@@ -64,7 +65,7 @@ impl ChatWidget {
     pub(crate) fn add_plugins_output(&mut self) {
         if !self.config.features.enabled(Feature::Plugins) {
             self.add_info_message(
-                "Plugins are disabled.".to_string(),
+                tr!("plugins-disabled").to_string(),
                 Some("Enable the plugins feature to use /plugins.".to_string()),
             );
             return;
@@ -567,7 +568,7 @@ impl ChatWidget {
                     format!("Removed marketplace {marketplace_display_name}."),
                     Some(match response.installed_root {
                         Some(installed_root) => {
-                            format!("Marketplace root: {}", installed_root.as_path().display())
+                            format!(codex_l10n::lookup_with_args("marketplace-root", &[("path", &format!("{}", x))]), installed_root.as_path().display())
                         }
                         None => format!(
                             "Removed marketplace config for {}.",

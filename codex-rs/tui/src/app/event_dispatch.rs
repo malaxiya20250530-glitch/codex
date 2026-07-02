@@ -1,3 +1,4 @@
+use codex_l10n;
 //! AppEvent dispatch for the TUI app.
 //!
 //! This module contains the exhaustive `AppEvent` dispatcher and exit-mode handling. Large domain
@@ -1476,7 +1477,7 @@ impl App {
                                     Line::from(vec!["• ".dim(), codex_l10n::lookup("sandbox-ready").into()]),
                                     Line::from(vec![
                                         "  ".into(),
-                                        "Codex can now safely edit files and execute commands in your computer"
+                                        tr!("sandbox-safe-message")
                                             .dark_gray(),
                                     ]),
                                 ]);
@@ -1547,7 +1548,7 @@ impl App {
                             .map(std::string::ToString::to_string)
                             .unwrap_or_else(|| "default".to_string());
                         tracing::info!("Selected model: {model}, Selected effort: {effort_label}");
-                        let mut message = format!("Model changed to {model}");
+                        let mut message = format!(codex_l10n::lookup_with_args("model-changed", &[("model", &format!("{}", model))]));
                         if let Some(label) = Self::reasoning_label_for(&model, effort.as_ref()) {
                             message.push(' ');
                             message.push_str(&label);
@@ -2057,7 +2058,7 @@ impl App {
                     let mut lines = Vec::new();
                     if let Some(environment_id) = environment_id {
                         lines.push(Line::from(vec![
-                            "Environment: ".into(),
+                            codex_l10n::lookup("environment-label").into(),
                             environment_id.bold(),
                         ]));
                         lines.push(Line::from(""));

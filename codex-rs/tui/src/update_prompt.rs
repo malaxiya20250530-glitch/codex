@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 #![cfg(not(debug_assertions))]
 
 use crate::history_cell::padded_emoji;
@@ -193,7 +194,7 @@ impl WidgetRef for &UpdatePromptScreen {
         column.push("");
         column.push(Line::from(vec![
             padded_emoji("  ✨").bold().cyan(),
-            "Update available!".bold(),
+            tr!("update-available").bold(),
             " ".into(),
             format!(
                 "{current} -> {latest}",

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Builds the `/theme` picker dialog for the TUI.
 //!
 //! The picker lists all bundled themes plus any custom `.tmTheme` files found
@@ -388,7 +389,7 @@ pub(crate) fn build_theme_picker_params(
         }) as Box<dyn Fn(&crate::app_event_sender::AppEventSender) + Send + Sync>,
     );
     SelectionViewParams {
-        title: Some("Select Syntax Theme".to_string()),
+        title: Some(tr!("select-syntax-theme").to_string()),
         subtitle: Some(theme_picker_subtitle(
             codex_home_owned.as_deref(),
             terminal_width,

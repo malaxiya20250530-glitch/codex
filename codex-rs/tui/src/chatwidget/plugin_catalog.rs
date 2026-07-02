@@ -1,3 +1,4 @@
+use codex_l10n;
 use std::collections::HashMap;
 use std::path::Path;
 use std::time::Duration;
@@ -286,7 +287,7 @@ impl Renderable for DelayedLoadingHeader {
         }
 
         let mut lines = Vec::with_capacity(3);
-        lines.push(Line::from("Plugins".bold()));
+        lines.push(Line::from(tr!("plugins-label").bold()));
 
         let now = Instant::now();
         let elapsed = now.saturating_duration_since(self.started_at);
@@ -345,11 +346,11 @@ impl ChatWidget {
             header: Box::new(DelayedLoadingHeader::new(
                 self.frame_requester.clone(),
                 self.config.animations,
-                "Loading available plugins...".to_string(),
+                tr!("loading-plugins").to_string(),
                 Some("This updates when the marketplace list is ready.".to_string()),
             )),
             items: vec![SelectionItem {
-                name: "Loading plugins...".to_string(),
+                name: tr!("loading-plugins-short").to_string(),
                 description: Some("This updates when the marketplace list is ready.".to_string()),
                 is_disabled: true,
                 ..Default::default()
@@ -510,11 +511,11 @@ impl ChatWidget {
             header: Box::new(DelayedLoadingHeader::new(
                 self.frame_requester.clone(),
                 self.config.animations,
-                format!("Loading details for {plugin_display_name}..."),
+                format!(codex_l10n::lookup_with_args("loading-details-for", &[("name", &plugin_display_name)])),
                 /*note*/ None,
             )),
             items: vec![SelectionItem {
-                name: "Loading plugin details...".to_string(),
+                name: tr!("loading-plugin-details").to_string(),
                 description: Some("This updates when plugin details load.".to_string()),
                 is_disabled: true,
                 ..Default::default()
@@ -594,7 +595,7 @@ impl ChatWidget {
 
         let mut items = vec![
             SelectionItem {
-                name: "Marketplace add failed".to_string(),
+                name: tr!("marketplace-add-failed").to_string(),
                 description: Some(
                     "Failed to add marketplace from the provided source.".to_string(),
                 ),
@@ -650,7 +651,7 @@ impl ChatWidget {
         let marketplace_display_name = marketplace_display_name.to_string();
         let mut items = vec![
             SelectionItem {
-                name: "Marketplace removal failed".to_string(),
+                name: tr!("marketplace-removal-failed").to_string(),
                 description: Some("Failed to remove the selected marketplace.".to_string()),
                 is_disabled: true,
                 ..Default::default()

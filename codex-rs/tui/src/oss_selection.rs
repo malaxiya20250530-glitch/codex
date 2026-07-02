@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 use std::io;
 use std::sync::LazyLock;
 
@@ -126,7 +127,7 @@ impl OssSelectionWidget<'_> {
         let mut contents: Vec<Line> = vec![
             Line::from(vec![
                 "? ".fg(Color::Blue),
-                "Select an open-source provider".bold(),
+                tr!("select-provider").bold(),
             ]),
             Line::from(""),
             Line::from("  Choose which local AI server to use for your session."),
@@ -279,7 +280,7 @@ impl WidgetRef for &OssSelectionWidget<'_> {
         ])
         .areas(response_chunk.inner(Margin::new(1, 0)));
 
-        Line::from("Select provider?").render(title_area, buf);
+        Line::from(tr!("select-provider-question")).render(title_area, buf);
 
         self.confirmation_prompt.clone().render(prompt_chunk, buf);
         let areas = Layout::horizontal(

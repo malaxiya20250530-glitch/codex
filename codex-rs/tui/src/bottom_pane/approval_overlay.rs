@@ -694,7 +694,7 @@ fn build_header(request: &ApprovalRequest) -> Box<dyn Renderable> {
             }
             if let Some(environment_id) = environment_id {
                 header.push(Line::from(vec![
-                    "Environment: ".into(),
+                    codex_l10n::lookup("environment-label").into(),
                     environment_id.clone().bold(),
                 ]));
                 header.push(Line::from(""));
@@ -881,7 +881,7 @@ fn exec_options(
 
                 Some(ApprovalOption {
                     label: format!(
-                        "Yes, and don't ask again for commands that start with `{rendered_prefix}`"
+                        tr!("yes-dont-ask-again")
                     ),
                     decision: ApprovalDecision::Command(
                         CommandExecutionApprovalDecision::AcceptWithExecpolicyAmendment {
@@ -893,11 +893,11 @@ fn exec_options(
             }
             CommandExecutionApprovalDecision::AcceptForSession => Some(ApprovalOption {
                 label: if network_approval_context.is_some() {
-                    "Yes, and allow this host for this conversation".to_string()
+                    tr!("yes-allow-host").to_string()
                 } else if additional_permissions.is_some() {
-                    "Yes, and allow these permissions for this session".to_string()
+                    tr!("yes-allow-permissions").to_string()
                 } else {
-                    "Yes, and don't ask again for this command in this session".to_string()
+                    tr!("yes-dont-ask-session").to_string()
                 },
                 decision: ApprovalDecision::Command(
                     CommandExecutionApprovalDecision::AcceptForSession,
@@ -909,11 +909,11 @@ fn exec_options(
             } => {
                 let (label, shortcuts) = match network_policy_amendment.action {
                     NetworkPolicyRuleAction::Allow => (
-                        "Yes, and allow this host in the future".to_string(),
+                        tr!("yes-allow-host-future").to_string(),
                         keymap.approve_for_prefix.clone(),
                     ),
                     NetworkPolicyRuleAction::Deny => (
-                        "No, and block this host in the future".to_string(),
+                        tr!("no-block-host-future").to_string(),
                         keymap.deny.clone(),
                     ),
                 };
@@ -933,7 +933,7 @@ fn exec_options(
                 shortcuts: keymap.deny.clone(),
             }),
             CommandExecutionApprovalDecision::Cancel => Some(ApprovalOption {
-                label: "No, and tell Codex what to do differently".to_string(),
+                label: tr!("no-tell-codex").to_string(),
                 decision: ApprovalDecision::Command(CommandExecutionApprovalDecision::Cancel),
                 shortcuts: keymap.decline.clone(),
             }),
@@ -1044,7 +1044,7 @@ fn patch_options(keymap: &ApprovalKeymap) -> Vec<ApprovalOption> {
             shortcuts: keymap.approve.clone(),
         },
         ApprovalOption {
-            label: "Yes, and don't ask again for these files".to_string(),
+            label: tr!("yes-dont-ask-files").to_string(),
             decision: ApprovalDecision::FileChange(FileChangeApprovalDecision::AcceptForSession),
             shortcuts: keymap.approve_for_session.clone(),
         },
@@ -1114,12 +1114,12 @@ fn elicitation_options(keymap: &ApprovalKeymap) -> Vec<ApprovalOption> {
 
     vec![
         ApprovalOption {
-            label: "Yes, provide the requested info".to_string(),
+            label: tr!("yes-provide-info").to_string(),
             decision: ApprovalDecision::McpElicitation(McpServerElicitationAction::Accept),
             shortcuts: keymap.approve.clone(),
         },
         ApprovalOption {
-            label: "No, but continue without it".to_string(),
+            label: tr!("no-continue-without").to_string(),
             decision: ApprovalDecision::McpElicitation(McpServerElicitationAction::Decline),
             shortcuts: decline_shortcuts,
         },

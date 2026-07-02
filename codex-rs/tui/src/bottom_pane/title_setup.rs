@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Terminal title configuration view for customizing the terminal window/tab title.
 //!
 //! This module provides an interactive picker for selecting which items appear
@@ -91,17 +92,17 @@ pub(crate) enum TerminalTitleItem {
 impl TerminalTitleItem {
     pub(crate) fn description(self) -> &'static str {
         match self {
-            TerminalTitleItem::AppName => "Codex app name",
-            TerminalTitleItem::Project => "Project name (falls back to current directory name)",
-            TerminalTitleItem::CurrentDir => "Current working directory",
+            TerminalTitleItem::AppName => tr!("codex-app-name"),
+            TerminalTitleItem::Project => tr!("title-project-name"),
+            TerminalTitleItem::CurrentDir => tr!("cwd-label"),
             TerminalTitleItem::Spinner => {
                 "Spinner while working, action-required message while blocked."
             }
             TerminalTitleItem::Status => {
                 "Compact session run-state text (Ready, Working, Thinking)"
             }
-            TerminalTitleItem::Thread => "Current thread title, or thread identifier when unnamed",
-            TerminalTitleItem::GitBranch => "Current Git branch (omitted when unavailable)",
+            TerminalTitleItem::Thread => tr!("title-thread"),
+            TerminalTitleItem::GitBranch => tr!("git-branch"),
             TerminalTitleItem::ContextRemaining => {
                 "Percentage of context window remaining (omitted when unknown)"
             }

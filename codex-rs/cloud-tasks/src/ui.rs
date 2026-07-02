@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 use ratatui::layout::Constraint;
 use ratatui::layout::Direction;
 use ratatui::layout::Layout;
@@ -745,7 +746,7 @@ fn attempt_status_span(status: AttemptStatus) -> Option<ratatui::text::Span<'sta
         AttemptStatus::Failed => Some("Failed".red().bold()),
         AttemptStatus::InProgress => Some("In progress".magenta()),
         AttemptStatus::Pending => Some("Pending".cyan()),
-        AttemptStatus::Cancelled => Some("Cancelled".dim()),
+        AttemptStatus::Cancelled => Some(tr!("cancelled-label").dim()),
         AttemptStatus::Unknown => None,
     }
 }
@@ -897,7 +898,7 @@ pub fn draw_env_modal(frame: &mut Frame, area: Rect, app: &mut App) {
     let inner = overlay_outer(area);
 
     // Title: primary only; move long hints to a subheader inside content.
-    let title = Line::from(vec!["Select Environment".magenta().bold()]);
+    let title = Line::from(vec![tr!("select-environment").magenta().bold()]);
     let block = overlay_block().title(title);
 
     frame.render_widget(Clear, inner);

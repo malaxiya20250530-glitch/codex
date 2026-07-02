@@ -268,12 +268,12 @@ impl McpServerElicitationFormRequest {
             (McpServerElicitationResponseMode::FormContent, Vec::new())
         } else if is_message_only_schema {
             let allow_description = if is_tool_approval_action {
-                "Run the tool and continue."
+                tr!("run-tool-continue")
             } else {
-                "Allow this request and continue."
+                tr!("allow-request")
             };
             let mut options = vec![McpServerElicitationOption {
-                label: "Allow".to_string(),
+                label: tr!("allow-label").to_string(),
                 description: Some(allow_description.to_string()),
                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
             }];
@@ -284,7 +284,7 @@ impl McpServerElicitationFormRequest {
                     "Allow this request and remember this choice for this session."
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Allow for this session".to_string(),
+                    label: tr!("allow-session").to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_SESSION_VALUE.to_string()),
                 });
@@ -296,22 +296,22 @@ impl McpServerElicitationFormRequest {
                     "Allow this request and remember this choice for future requests."
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Always allow".to_string(),
+                    label: tr!("always-allow").to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_ALWAYS_VALUE.to_string()),
                 });
             }
             if is_tool_approval_action {
                 options.push(McpServerElicitationOption {
-                    label: "Cancel".to_string(),
-                    description: Some("Cancel this tool call".to_string()),
+                    label: tr!("cancel-label").to_string(),
+                    description: Some(tr!("cancel-tool").to_string()),
                     value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                 });
             } else {
                 options.extend([
                     McpServerElicitationOption {
-                        label: "Deny".to_string(),
-                        description: Some("Decline this request and continue.".to_string()),
+                        label: tr!("deny-label").to_string(),
+                        description: Some(tr!("decline-continue").to_string()),
                         value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                     },
                     McpServerElicitationOption {
@@ -580,7 +580,7 @@ fn parse_field(
             let options = [true, false]
                 .into_iter()
                 .map(|value| {
-                    let label = if value { "True" } else { "False" }.to_string();
+                    let label = if value { tr!("true-label") } else { tr!("false-label") }.to_string();
                     McpServerElicitationOption {
                         label,
                         description: None,
@@ -1855,13 +1855,13 @@ mod tests {
         let request = from_form_request(
             thread_id,
             form_request(
-                "Allow this request?",
+                tr!("allow-request"),
                 serde_json::json!({
                     "type": "object",
                     "properties": {
                         "confirmed": {
                             "type": "boolean",
-                            "title": "Confirm",
+                            "title": tr!("confirm-label"),
                             "description": "Approve the pending action.",
                         }
                     },

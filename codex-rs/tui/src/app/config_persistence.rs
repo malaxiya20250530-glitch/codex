@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Runtime configuration persistence helpers for the TUI app.
 //!
 //! This module owns the app-level glue between config.toml edits, in-memory `Config` refreshes,
@@ -413,7 +414,7 @@ impl App {
                         serde_json::json!(auto_review_preset.approvals_reviewer.to_string()),
                     ));
                     if previous_approvals_reviewer != auto_review_preset.approvals_reviewer {
-                        permissions_history_label = Some("Approve for me");
+                        permissions_history_label = Some(tr!("approve-for-me"));
                     }
                 } else if !effective_enabled {
                     feature_edits.push(crate::config_update::clear_config_value(
@@ -421,7 +422,7 @@ impl App {
                     ));
                     feature_config.approvals_reviewer = ApprovalsReviewer::User;
                     if previous_approvals_reviewer != ApprovalsReviewer::User {
-                        permissions_history_label = Some("Ask for approval");
+                        permissions_history_label = Some(tr!("ask-for-approval"));
                     }
                 }
                 approvals_reviewer_override = Some(feature_config.approvals_reviewer);

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Settings-adjacent popup surfaces for `ChatWidget`.
 //!
 //! This keeps theme, personality, and experimental-feature UI out of the main
@@ -79,7 +80,7 @@ impl ChatWidget {
             .collect();
 
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Select Personality".bold()));
+        header.push(Line::from(tr!("select-personality").bold()));
         header.push(Line::from("Choose a communication style for Codex.".dim()));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {

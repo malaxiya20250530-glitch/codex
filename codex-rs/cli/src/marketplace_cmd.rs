@@ -1,3 +1,4 @@
+use codex_l10n;
 use anyhow::Context;
 use anyhow::Result;
 use anyhow::bail;
@@ -509,7 +510,7 @@ fn print_upgrade_outcome(
         println!("No configured Git marketplaces to upgrade.");
     } else if outcome.upgraded_roots.is_empty() {
         if marketplace_name.is_some() {
-            println!("Marketplace `{selection_label}` is already up to date.");
+            println!(codex_l10n::lookup_with_args("marketplace-updated", &[("name", selection_label)]));
         } else {
             println!("All configured Git marketplaces are already up to date.");
         }

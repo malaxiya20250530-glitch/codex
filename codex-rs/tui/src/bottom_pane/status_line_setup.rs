@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Status line configuration view for customizing the TUI status bar.
 //!
 //! This module provides an interactive picker for selecting which items appear
@@ -148,21 +149,21 @@ impl StatusLineItem {
     /// User-visible description shown in the popup.
     pub(crate) fn description(self) -> &'static str {
         match self {
-            StatusLineItem::ModelName => "Current model name",
-            StatusLineItem::ModelWithReasoning => "Current model name with reasoning level",
-            StatusLineItem::Reasoning => "Current reasoning level",
-            StatusLineItem::CurrentDir => "Current working directory",
-            StatusLineItem::ProjectRoot => "Project name (omitted when unavailable)",
-            StatusLineItem::GitBranch => "Current Git branch (omitted when unavailable)",
+            StatusLineItem::ModelName => tr!("current-model-name"),
+            StatusLineItem::ModelWithReasoning => tr!("model-with-reasoning"),
+            StatusLineItem::Reasoning => tr!("current-reasoning"),
+            StatusLineItem::CurrentDir => tr!("cwd-label"),
+            StatusLineItem::ProjectRoot => tr!("project-name"),
+            StatusLineItem::GitBranch => tr!("git-branch"),
             StatusLineItem::PullRequestNumber => {
                 "Open pull request number for the current branch (omitted when unavailable)"
             }
             StatusLineItem::BranchChanges => {
                 "Committed branch changes against the default branch (omitted when unavailable)"
             }
-            StatusLineItem::Status => "Compact session run-state text (Ready, Working, Thinking)",
-            StatusLineItem::Permissions => "Active permission profile or sandbox mode",
-            StatusLineItem::ApprovalMode => "Active command approval mode",
+            StatusLineItem::Status => tr!("compact-state"),
+            StatusLineItem::Permissions => tr!("active-permission"),
+            StatusLineItem::ApprovalMode => tr!("active-approval"),
             StatusLineItem::ContextRemaining => {
                 "Percentage of context window remaining (omitted when unknown)"
             }
@@ -175,13 +176,13 @@ impl StatusLineItem {
             StatusLineItem::WeeklyLimit => {
                 "Remaining usage on the secondary usage limit (omitted when unavailable)"
             }
-            StatusLineItem::CodexVersion => "Codex application version",
+            StatusLineItem::CodexVersion => tr!("codex-version"),
             StatusLineItem::ContextWindowSize => {
                 "Total context window size in tokens (omitted when unknown)"
             }
-            StatusLineItem::UsedTokens => "Total tokens used in session (omitted when zero)",
-            StatusLineItem::TotalInputTokens => "Total input tokens used in session",
-            StatusLineItem::TotalOutputTokens => "Total output tokens used in session",
+            StatusLineItem::UsedTokens => tr!("tokens-total"),
+            StatusLineItem::TotalInputTokens => tr!("tokens-input"),
+            StatusLineItem::TotalOutputTokens => tr!("tokens-output"),
             StatusLineItem::SessionId => "Current thread identifier (omitted until thread starts)",
             StatusLineItem::FastMode => "Whether Fast mode is currently active",
             StatusLineItem::RawOutput => "Whether raw scrollback mode is active",

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Slash-command dispatch and local-recall handoff for `ChatWidget`.
 //!
 //! `ChatComposer` parses slash input and stages recognized command text for local
@@ -94,7 +95,7 @@ impl ChatWidget {
             true
         } else {
             self.add_info_message(
-                "Plan mode unavailable right now.".to_string(),
+                tr!("plan-mode-unavailable").to_string(),
                 /*hint*/ None,
             );
             false

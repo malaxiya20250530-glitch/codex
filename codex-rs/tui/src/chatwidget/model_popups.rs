@@ -1,3 +1,4 @@
+use codex_l10n;
 //! Model, collaboration, and reasoning popups for `ChatWidget`.
 //!
 //! These surfaces are tightly related because changing one often redirects
@@ -11,7 +12,7 @@ impl ChatWidget {
     pub(crate) fn open_model_popup(&mut self) {
         if !self.is_session_configured() {
             self.add_info_message(
-                "Model selection is disabled until startup completes.".to_string(),
+                tr!("model-startup-disabled").to_string(),
                 /*hint*/ None,
             );
             return;
@@ -21,7 +22,7 @@ impl ChatWidget {
             Ok(models) => models,
             Err(_) => {
                 self.add_info_message(
-                    "Models are being updated; please try /model again in a moment.".to_string(),
+                    tr!("models-updating").to_string(),
                     /*hint*/ None,
                 );
                 return;
@@ -143,7 +144,7 @@ impl ChatWidget {
         }
 
         let header = self.model_menu_header(
-            "Select Model",
+            tr!("select-model"),
             "Pick a quick auto mode or browse all models.",
         );
         self.bottom_pane.show_selection_view(SelectionViewParams {
@@ -202,7 +203,7 @@ impl ChatWidget {
         }
 
         let header = self.model_menu_header(
-            "Select Model and Effort",
+            tr!("select-model-effort"),
             "Access legacy models by running codex -m <model_name> or in your config.toml",
         );
         self.bottom_pane.show_selection_view(SelectionViewParams {
@@ -485,7 +486,7 @@ impl ChatWidget {
 
         let mut header = ColumnRenderable::new();
         header.push(Line::from(
-            format!("Select Reasoning Level for {model_slug}").bold(),
+            format!(format!("{}", codex_l10n::lookup_with_args("select-reasoning", &[("model", model_slug)]))).bold(),
         ));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {

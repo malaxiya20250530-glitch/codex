@@ -1,3 +1,4 @@
+use codex_l10n;
 //! Permission and approval popup flows for `ChatWidget`.
 //!
 //! This module owns the generic permission pickers and confirmation surfaces;
@@ -150,7 +151,7 @@ impl ChatWidget {
         });
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Update Model Permissions".to_string()),
+            title: Some(tr!("model-update-permissions").to_string()),
             footer_note,
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -208,8 +209,8 @@ impl ChatWidget {
         );
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Auto-review Denials".to_string()),
-            subtitle: Some("Select a denied action to approve.".to_string()),
+            title: Some(tr!("auto-review-denials").to_string()),
+            subtitle: Some(tr!("select-denied-action").to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,
@@ -267,7 +268,7 @@ impl ChatWidget {
             tx.send(AppEvent::UpdateApprovalsReviewer(approvals_reviewer));
             tx.send(AppEvent::InsertHistoryCell(Box::new(
                 history_cell::new_info_event(
-                    format!("Permissions updated to {label}"),
+                    format!(codex_l10n::lookup_with_args("permission-updated", &[("label", &label)])),
                     /*hint*/ None,
                 ),
             )));
@@ -413,7 +414,7 @@ impl ChatWidget {
         let selected_name = preset.label.to_string();
         let approval = AskForApproval::from(preset.approval);
         let mut header_children: Vec<Box<dyn Renderable>> = Vec::new();
-        let title_line = Line::from("Enable full access?").bold();
+        let title_line = Line::from(tr!("enable-full-access")).bold();
         let info_line = Line::from(vec![
             "When Codex runs with full access, it can edit any file on your computer and run commands with network, without your approval. "
                 .into(),
@@ -470,21 +471,21 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: "Yes, continue anyway".to_string(),
-                description: Some("Apply full access for this session".to_string()),
+                description: Some(tr!("apply-full-access").to_string()),
                 actions: accept_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "Yes, and don't ask again".to_string(),
-                description: Some("Enable full access and remember this choice".to_string()),
+                description: Some(tr!("enable-full-access-remember").to_string()),
                 actions: accept_and_remember_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "Cancel".to_string(),
-                description: Some("Go back without enabling full access".to_string()),
+                description: Some(tr!("go-back-no-access").to_string()),
                 actions: deny_actions,
                 dismiss_on_select: true,
                 ..Default::default()

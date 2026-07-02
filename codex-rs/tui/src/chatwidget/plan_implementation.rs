@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 use codex_protocol::config_types::CollaborationModeMask;
 
 use crate::app_event::AppEvent;
@@ -81,7 +82,7 @@ pub(super) fn selection_view_params(
         items: vec![
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_YES.to_string(),
-                description: Some("Switch to Default and start coding.".to_string()),
+                description: Some(tr!("switch-default-code").to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: implement_actions,
@@ -101,7 +102,7 @@ pub(super) fn selection_view_params(
             },
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_NO.to_string(),
-                description: Some("Continue planning with the model.".to_string()),
+                description: Some(tr!("continue-planning").to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: Vec::new(),

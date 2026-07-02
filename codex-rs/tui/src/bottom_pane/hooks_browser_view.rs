@@ -294,7 +294,7 @@ impl HooksBrowserView {
 
     fn event_header_lines() -> Vec<Line<'static>> {
         vec![
-            "Hooks".bold().into(),
+            tr!("hooks-label").bold().into(),
             "Lifecycle hooks from config and enabled plugins."
                 .dim()
                 .into(),
@@ -338,12 +338,12 @@ impl HooksBrowserView {
         let show_review = rows.iter().any(|row| row.needs_review > 0);
         let mut lines = Vec::new();
         let mut header = vec![
-            format!("{:<EVENT_COLUMN_WIDTH$}", "Event").into(),
+            format!("{:<EVENT_COLUMN_WIDTH$}", tr!("event-label")).into(),
             format!("{:<COUNT_COLUMN_WIDTH$}", "Installed").into(),
             format!("{:<COUNT_COLUMN_WIDTH$}", "Active").into(),
         ];
         if show_review {
-            header.push(format!("{:<COUNT_COLUMN_WIDTH$}", "Review").into());
+            header.push(format!("{:<COUNT_COLUMN_WIDTH$}", tr!("review-comment")).into());
         }
         header.push("Description".into());
         lines.push(Line::from(header));

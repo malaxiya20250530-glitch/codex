@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 use super::App;
 use crate::app_event::AppEvent;
 use crate::app_event::ThreadGoalSetMode;
@@ -300,20 +301,20 @@ impl App {
         let items = vec![
             SelectionItem {
                 name: "Replace current goal".to_string(),
-                description: Some("Set the new objective and start it now".to_string()),
+                description: Some(tr!("set-objective-start").to_string()),
                 actions: replace_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
-                name: "Cancel".to_string(),
-                description: Some("Keep the current goal".to_string()),
+                name: tr!("cancel-label").to_string(),
+                description: Some(tr!("keep-current-goal").to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
         ];
         self.chat_widget.show_selection_view(SelectionViewParams {
-            title: Some("Replace goal?".to_string()),
+            title: Some(tr!("replace-goal").to_string()),
             subtitle: Some(format!(
                 "New objective: {}",
                 truncate_text(&objective, /*max_graphemes*/ 200)

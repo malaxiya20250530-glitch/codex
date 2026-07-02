@@ -1459,14 +1459,14 @@ mod tests {
         let items = vec![
             SelectionItem {
                 name: "Read Only".to_string(),
-                description: Some("Codex can read files".to_string()),
+                description: Some(tr!("codex-read-files").to_string()),
                 is_current: true,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "Full Access".to_string(),
-                description: Some("Codex can edit files".to_string()),
+                description: Some(tr!("codex-edit-files").to_string()),
                 is_current: false,
                 dismiss_on_select: true,
                 ..Default::default()
@@ -1474,7 +1474,7 @@ mod tests {
         ];
         new_view(
             SelectionViewParams {
-                title: Some("Select Approval Mode".to_string()),
+                title: Some(tr!("select-approval-mode").to_string()),
                 subtitle: subtitle.map(str::to_string),
                 footer_hint: Some(standard_popup_hint_line()),
                 items,
@@ -1546,7 +1546,7 @@ mod tests {
         let tx = AppEventSender::new(tx_raw);
         let mut view = ListSelectionView::new(
             SelectionViewParams {
-                title: Some("Debug".to_string()),
+                title: Some(tr!("debug-label").to_string()),
                 items: make_scrolling_width_items(),
                 col_width_mode,
                 ..Default::default()
@@ -2113,7 +2113,7 @@ mod tests {
                 items: vec![
                     SelectionItem {
                         name: "Unavailable".to_string(),
-                        description: Some("Not available right now.".to_string()),
+                        description: Some(tr!("not-available").to_string()),
                         is_current: true,
                         is_disabled: true,
                         ..Default::default()
@@ -2125,7 +2125,7 @@ mod tests {
                     },
                     SelectionItem {
                         name: "Busy".to_string(),
-                        description: Some("Still disabled.".to_string()),
+                        description: Some(tr!("still-disabled").to_string()),
                         disabled_reason: Some("Try again later.".to_string()),
                         ..Default::default()
                     },
@@ -2345,7 +2345,7 @@ mod tests {
         ];
         let view = new_view(
             SelectionViewParams {
-                title: Some("Approval".to_string()),
+                title: Some(tr!("approval-label").to_string()),
                 items,
                 ..Default::default()
             },
@@ -2403,7 +2403,7 @@ mod tests {
         ];
         let view = new_view(
             SelectionViewParams {
-                title: Some("Select Model and Effort".to_string()),
+                title: Some(tr!("select-model-effort").to_string()),
                 items,
                 ..Default::default()
             },

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Connector cache, popup, and refresh handling for `ChatWidget`.
 
 use super::*;
@@ -124,13 +125,13 @@ impl ChatWidget {
     fn connectors_loading_popup_params(&self) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("Apps".bold()));
-        header.push(Line::from("Loading installed and available apps...".dim()));
+        header.push(Line::from(tr!("loading-apps").dim()));
 
         SelectionViewParams {
             view_id: Some(CONNECTORS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Loading apps...".to_string(),
+                name: tr!("loading-apps-short").to_string(),
                 description: Some("This updates when the full list is ready.".to_string()),
                 is_disabled: true,
                 ..Default::default()

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Review preset selection and custom review prompt surfaces.
 
 use super::*;
@@ -7,7 +8,7 @@ impl ChatWidget {
         let mut items: Vec<SelectionItem> = Vec::new();
 
         items.push(SelectionItem {
-            name: "Review against a base branch".to_string(),
+            name: tr!("review-base-branch").to_string(),
             description: Some("(PR Style)".into()),
             actions: vec![Box::new({
                 let cwd = self.config.cwd.to_path_buf();
@@ -21,7 +22,7 @@ impl ChatWidget {
         });
 
         items.push(SelectionItem {
-            name: "Review uncommitted changes".to_string(),
+            name: tr!("review-uncommitted").to_string(),
             actions: vec![Box::new(move |tx: &AppEventSender| {
                 tx.review(ReviewTarget::UncommittedChanges);
             })],
@@ -30,7 +31,7 @@ impl ChatWidget {
         });
 
         items.push(SelectionItem {
-            name: "Review a commit".to_string(),
+            name: tr!("review-commit").to_string(),
             actions: vec![Box::new({
                 let cwd = self.config.cwd.to_path_buf();
                 move |tx| {
@@ -53,7 +54,7 @@ impl ChatWidget {
         });
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a review preset".into()),
+            title: Some(tr!("review-preset").into()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             ..Default::default()
@@ -83,7 +84,7 @@ impl ChatWidget {
         }
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a base branch".to_string()),
+            title: Some(tr!("select-base-branch").to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,
@@ -116,7 +117,7 @@ impl ChatWidget {
         }
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a commit to review".to_string()),
+            title: Some(tr!("select-commit-review").to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,

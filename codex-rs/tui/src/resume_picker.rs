@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::path::Path;
@@ -1004,7 +1005,7 @@ impl PickerState {
             return;
         };
         let Some(thread_id) = row.thread_id else {
-            self.inline_error = Some("No transcript available for this session".to_string());
+            self.inline_error = Some(tr!("no-transcript").to_string());
             self.request_frame();
             return;
         };
@@ -1125,7 +1126,7 @@ impl PickerState {
                             format!("Failed to read session metadata from {}", path.display())
                         }
                         None => {
-                            String::from("Failed to read session metadata from selected session")
+                            String::from(tr!("session-not-found"))
                         }
                     });
                     self.request_frame();
@@ -1329,7 +1330,7 @@ impl PickerState {
                     if self.pending_transcript_open == Some(thread_id) {
                         self.pending_transcript_open = None;
                         self.transcript_loading_frame_shown = false;
-                        self.inline_error = Some("Could not load transcript preview".to_string());
+                        self.inline_error = Some(tr!("loading-failed").to_string());
                     }
                     self.request_frame();
                 }
@@ -1788,7 +1789,7 @@ fn row_from_app_server_thread(thread: Thread) -> Option<Row> {
     Some(Row {
         path: thread.path,
         preview: if preview.is_empty() {
-            String::from("(no message yet)")
+            String::from(tr!("no-message-yet"))
         } else {
             preview.to_string()
         },
@@ -2921,7 +2922,7 @@ fn render_transcript_preview_lines(
     };
     let preview_lines = match state.transcript_previews.get(&thread_id) {
         Some(TranscriptPreviewState::Loading) => {
-            vec![vec!["  │ ".dim(), "Loading recent transcript...".italic().dim()].into()]
+            vec![vec!["  │ ".dim(), tr!("loading-recent-transcript").italic().dim()].into()]
         }
         Some(TranscriptPreviewState::Failed) => vec![
             vec![

@@ -1,3 +1,4 @@
+use codex_l10n;
 //! Session headers, onboarding guidance, and transcript cards.
 
 use super::*;
@@ -416,7 +417,7 @@ impl HistoryCell for SessionHeaderHistoryCell {
             )),
         ];
         if self.yolo_mode {
-            lines.push(Line::from("permissions: YOLO mode"));
+            lines.push(Line::from(codex_l10n::lookup_with_args("permissions-label", &[])));
         }
         lines
     }

@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Goal summary for the bare `/goal` command.
 
 use super::*;
@@ -48,21 +49,21 @@ impl ChatWidget {
             });
         })];
         self.show_selection_view(SelectionViewParams {
-            title: Some("Resume paused goal?".to_string()),
+            title: Some(tr!("resume-paused-goal").to_string()),
             subtitle: Some(format!("Goal: {objective}")),
             footer_hint: Some(standard_popup_hint_line()),
             initial_selected_idx: Some(0),
             items: vec![
                 SelectionItem {
-                    name: "Resume goal".to_string(),
-                    description: Some("Mark it active and continue when idle".to_string()),
+                    name: tr!("resume-goal").to_string(),
+                    description: Some(tr!("mark-active").to_string()),
                     actions: resume_actions,
                     dismiss_on_select: true,
                     ..Default::default()
                 },
                 SelectionItem {
                     name: "Leave paused".to_string(),
-                    description: Some("Keep it paused; use /goal resume later".to_string()),
+                    description: Some(tr!("keep-paused").to_string()),
                     dismiss_on_select: true,
                     ..Default::default()
                 },
@@ -84,7 +85,7 @@ impl ChatWidget {
 
 fn goal_summary_lines(goal: &AppThreadGoal) -> Vec<Line<'static>> {
     let mut lines = vec![
-        Line::from("Goal".bold()),
+        Line::from(tr!("goal-label").bold()),
         Line::from(vec![
             "Status: ".dim(),
             goal_status_label(goal.status).to_string().into(),
