@@ -218,9 +218,10 @@ struct UniqueHistoryMatch {
 
 /// Persistent-history lookup currently blocking an incremental search scan.
 ///
-/// The pending request records the direction and boundary behavior that were active when the fetch
-/// was issued so the response can either return a unique match or continue scanning as if no async
-/// gap had occurred.
+/// The pending request records the boundary behavior that was active when the fetch was issued so
+/// the response can either return a unique match or continue scanning as if no async gap had
+/// occurred. Single-entry requests retain their direction; batch requests are older-only by
+/// construction.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum PendingHistorySearch {
     Entry {
@@ -230,7 +231,6 @@ enum PendingHistorySearch {
     },
     Batch {
         end_offset: usize,
-        direction: HistorySearchDirection,
         boundary_if_exhausted: bool,
     },
 }

@@ -69,6 +69,10 @@ pub(crate) struct HistoryBatchEntryResponse {
     pub(crate) entry: Option<String>,
 }
 
+/// Persistent-history data routed back to the thread that requested it.
+///
+/// Batch responses preserve absolute offsets and malformed-row gaps so the composer can cache the
+/// data independently of whichever search query is active when the response arrives.
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) enum HistoryLookupResponse {
     Entry {

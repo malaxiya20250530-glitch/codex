@@ -23,7 +23,9 @@ const MAX_BATCH_BYTES: usize = 64 * 1024;
 /// searching older valid records without changing offset semantics.
 #[derive(Clone, Debug, PartialEq)]
 pub struct HistoryBatchEntry {
+    /// Zero-based position in the history file, counted from the oldest record.
     pub offset: usize,
+    /// Parsed record, or `None` when the row at `offset` is malformed.
     pub entry: Option<HistoryEntry>,
 }
 
@@ -33,7 +35,9 @@ pub struct HistoryBatchEntry {
 /// `entries`. It is explicit because the byte cap can make a batch contain fewer than 128 rows.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct HistoryBatch {
+    /// Covered records in newest-to-oldest order.
     pub entries: Vec<HistoryBatchEntry>,
+    /// Next absolute offset to request after exhausting `entries`.
     pub next_older_offset: Option<usize>,
 }
 

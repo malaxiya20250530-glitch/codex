@@ -40,7 +40,6 @@ impl ChatComposerHistory {
 
         let Some(PendingHistorySearch::Batch {
             end_offset: awaited_end,
-            direction,
             boundary_if_exhausted,
         }) = self.search.as_ref().and_then(|search| search.awaiting)
         else {
@@ -59,25 +58,22 @@ impl ChatComposerHistory {
             }
         }
 
-        let result = match direction {
-            HistorySearchDirection::Older => {
-                if let Some(next_offset) = next_older_offset {
-                    self.advance_older_search_with_batches_from(
-                        next_offset,
-                        boundary_if_exhausted,
-                        app_event_tx,
-                    )
-                } else {
-                    self.exhausted_search_result(direction, boundary_if_exhausted)
-                }
-            }
-            HistorySearchDirection::Newer => {
-                self.exhausted_search_result(HistorySearchDirection::Newer, boundary_if_exhausted)
-            }
+        let result = if let Some(next_offset) = next_older_offset {
+            self.advance_older_search_with_batches_from(
+                next_offset,
+                boundary_if_exhausted,
+                app_event_tx,
+            )
+        } else {
+            self.exhausted_search_result(HistorySearchDirection::Older, boundary_if_exhausted)
         };
         Some(result)
     }
 
+    /// Switches an older search from the single newest-entry probe to bounded batch lookups.
+    ///
+    /// Keeping the first probe on the single-entry path avoids fetching a batch when the newest
+    /// persistent entry matches, while every later miss is amortized across a bounded batch.
     pub(super) fn advance_older_search_after_entry_miss(
         &mut self,
         offset: usize,
@@ -137,7 +133,6 @@ impl ChatComposerHistory {
         if let Some(search) = self.search.as_mut() {
             search.awaiting = Some(PendingHistorySearch::Batch {
                 end_offset,
-                direction: HistorySearchDirection::Older,
                 boundary_if_exhausted,
             });
         }
