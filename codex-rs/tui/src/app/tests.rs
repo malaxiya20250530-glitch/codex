@@ -450,9 +450,38 @@ async fn history_lookup_response_is_routed_to_requesting_thread() -> Result<()> 
         panic!("expected thread-routed history response");
     };
     assert_eq!(routed_thread_id, thread_id);
-    assert_eq!(event.offset, 0);
-    assert_eq!(event.log_id, 1);
-    assert!(event.entry.is_none());
+    assert_eq!(
+        event,
+        HistoryLookupResponse::Entry {
+            offset: 0,
+            log_id: 1,
+            entry: None,
+        }
+    );
+
+    app.lookup_message_history_batch(thread_id, /*end_offset*/ 10, /*log_id*/ 1)
+        .await?;
+    let app_event = tokio::time::timeout(Duration::from_secs(1), app_event_rx.recv())
+        .await
+        .expect("history batch lookup should emit an app event")
+        .expect("app event channel should stay open");
+    let AppEvent::ThreadHistoryEntryResponse {
+        thread_id: routed_thread_id,
+        event,
+    } = app_event
+    else {
+        panic!("expected thread-routed history batch response");
+    };
+    assert_eq!(routed_thread_id, thread_id);
+    assert_eq!(
+        event,
+        HistoryLookupResponse::Batch {
+            end_offset: 10,
+            log_id: 1,
+            entries: Vec::new(),
+            next_older_offset: None,
+        }
+    );
 
     Ok(())
 }

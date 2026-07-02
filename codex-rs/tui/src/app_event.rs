@@ -63,11 +63,25 @@ pub(crate) enum ThreadGoalSetMode {
     },
 }
 
-#[derive(Debug, Clone)]
-pub(crate) struct HistoryLookupResponse {
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct HistoryBatchEntryResponse {
     pub(crate) offset: usize,
-    pub(crate) log_id: u64,
     pub(crate) entry: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) enum HistoryLookupResponse {
+    Entry {
+        offset: usize,
+        log_id: u64,
+        entry: Option<String>,
+    },
+    Batch {
+        end_offset: usize,
+        log_id: u64,
+        entries: Vec<HistoryBatchEntryResponse>,
+        next_older_offset: Option<usize>,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -191,6 +205,13 @@ pub(crate) enum AppEvent {
     LookupMessageHistoryEntry {
         thread_id: ThreadId,
         offset: usize,
+        log_id: u64,
+    },
+
+    /// Fetch a bounded batch of persistent history entries for reverse search.
+    LookupMessageHistoryBatch {
+        thread_id: ThreadId,
+        end_offset: usize,
         log_id: u64,
     },
 

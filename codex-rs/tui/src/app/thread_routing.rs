@@ -504,10 +504,53 @@ impl App {
 
             app_event_tx.send(AppEvent::ThreadHistoryEntryResponse {
                 thread_id,
-                event: HistoryLookupResponse {
+                event: HistoryLookupResponse::Entry {
                     offset,
                     log_id,
                     entry: entry_opt.map(|entry| entry.text),
+                },
+            });
+        });
+        Ok(())
+    }
+
+    /// Fetch one bounded local cross-session history batch for the requesting thread.
+    pub(super) async fn lookup_message_history_batch(
+        &mut self,
+        thread_id: ThreadId,
+        end_offset: usize,
+        log_id: u64,
+    ) -> Result<()> {
+        let history_config = codex_message_history::HistoryConfig::new(
+            self.chat_widget.config_ref().codex_home.clone(),
+            &self.chat_widget.config_ref().history,
+        );
+        let app_event_tx = self.app_event_tx.clone();
+        tokio::spawn(async move {
+            let batch = tokio::task::spawn_blocking(move || {
+                codex_message_history::lookup_batch(log_id, end_offset, &history_config)
+            })
+            .await
+            .unwrap_or_else(|err| {
+                tracing::warn!(error = %err, "history batch lookup task failed");
+                codex_message_history::HistoryBatch::default()
+            });
+            let entries = batch
+                .entries
+                .into_iter()
+                .map(|entry| crate::app_event::HistoryBatchEntryResponse {
+                    offset: entry.offset,
+                    entry: entry.entry.map(|entry| entry.text),
+                })
+                .collect();
+
+            app_event_tx.send(AppEvent::ThreadHistoryEntryResponse {
+                thread_id,
+                event: HistoryLookupResponse::Batch {
+                    end_offset,
+                    log_id,
+                    entries,
+                    next_older_offset: batch.next_older_offset,
                 },
             });
         });

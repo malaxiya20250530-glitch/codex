@@ -22,6 +22,12 @@ use crate::mention_codec::decode_history_mentions_with_at_mentions;
 use codex_protocol::ThreadId;
 use codex_protocol::user_input::TextElement;
 
+#[path = "chat_composer_history/search_batch.rs"]
+mod search_batch;
+#[cfg(test)]
+#[path = "chat_composer_history/search_batch_tests.rs"]
+mod search_batch_tests;
+
 /// A composer history entry that can rehydrate draft state.
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct HistoryEntry {
@@ -126,6 +132,8 @@ pub(crate) struct ChatComposerHistory {
 
     /// Cache of persistent history entries fetched on-demand (text-only).
     fetched_history: HashMap<usize, HistoryEntry>,
+    /// Persistent offsets covered by a batch but containing no valid entry.
+    fetched_history_misses: HashSet<usize>,
 
     /// Current cursor within the combined (persistent + local) history. `None`
     /// indicates the user is *not* currently browsing history.
@@ -213,11 +221,18 @@ struct UniqueHistoryMatch {
 /// The pending request records the direction and boundary behavior that were active when the fetch
 /// was issued so the response can either return a unique match or continue scanning as if no async
 /// gap had occurred.
-#[derive(Clone, Copy, Debug)]
-struct PendingHistorySearch {
-    offset: usize,
-    direction: HistorySearchDirection,
-    boundary_if_exhausted: bool,
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum PendingHistorySearch {
+    Entry {
+        offset: usize,
+        direction: HistorySearchDirection,
+        boundary_if_exhausted: bool,
+    },
+    Batch {
+        end_offset: usize,
+        direction: HistorySearchDirection,
+        boundary_if_exhausted: bool,
+    },
 }
 
 impl ChatComposerHistory {
@@ -234,6 +249,7 @@ impl ChatComposerHistory {
             local_history: Vec::new(),
             replay_seeded_history: Vec::new(),
             fetched_history: HashMap::new(),
+            fetched_history_misses: HashSet::new(),
             history_cursor: None,
             pending_navigation_direction: None,
             last_history_text: None,
@@ -248,6 +264,7 @@ impl ChatComposerHistory {
         }
         self.at_mention_restore_enabled = enabled;
         self.fetched_history.clear();
+        self.fetched_history_misses.clear();
         self.history_cursor = None;
         self.last_history_text = None;
         self.search = None;
@@ -263,6 +280,7 @@ impl ChatComposerHistory {
         self.persistent_log_id = Some(log_id);
         self.persistent_entry_count = entry_count;
         self.fetched_history.clear();
+        self.fetched_history_misses.clear();
         self.local_history.clear();
         self.replay_seeded_history.clear();
         self.history_cursor = None;
@@ -452,29 +470,47 @@ impl ChatComposerHistory {
             .search
             .as_ref()
             .and_then(|search| search.awaiting)
-            .is_some_and(|pending| pending.offset == offset)
+            .is_some_and(|pending| {
+                matches!(pending, PendingHistorySearch::Entry { offset: awaited, .. } if awaited == offset)
+            })
         {
             let pending = self
                 .search
                 .as_ref()
                 .and_then(|search| search.awaiting)
-                .unwrap_or(PendingHistorySearch {
+                .unwrap_or(PendingHistorySearch::Entry {
                     offset,
                     direction: HistorySearchDirection::Older,
                     boundary_if_exhausted: false,
                 });
+            let PendingHistorySearch::Entry {
+                direction,
+                boundary_if_exhausted,
+                ..
+            } = pending
+            else {
+                return HistoryEntryResponse::Ignored;
+            };
             if let Some(entry) = entry
                 && self.search_matches(&entry)
                 && self.search_result_is_unique(&entry)
             {
                 return HistoryEntryResponse::Search(self.search_match(offset, entry));
             }
-            return HistoryEntryResponse::Search(self.advance_search_after(
-                offset,
-                pending.direction,
-                pending.boundary_if_exhausted,
-                app_event_tx,
-            ));
+            let result = match direction {
+                HistorySearchDirection::Older => self.advance_older_search_after_entry_miss(
+                    offset,
+                    boundary_if_exhausted,
+                    app_event_tx,
+                ),
+                HistorySearchDirection::Newer => self.advance_search_after(
+                    offset,
+                    direction,
+                    boundary_if_exhausted,
+                    app_event_tx,
+                ),
+            };
+            return HistoryEntryResponse::Search(result);
         }
 
         if self.history_cursor == Some(offset as isize) {
@@ -655,11 +691,12 @@ impl ChatComposerHistory {
                 if self.search_matches(&entry) && self.search_result_is_unique(&entry) {
                     return self.search_match(offset, entry);
                 }
-            } else if offset < self.persistent_entry_count
+            } else if !self.fetched_history_misses.contains(&offset)
+                && offset < self.persistent_entry_count
                 && let (Some(thread_id), Some(log_id)) = (self.thread_id, self.persistent_log_id)
             {
                 if let Some(search) = self.search.as_mut() {
-                    search.awaiting = Some(PendingHistorySearch {
+                    search.awaiting = Some(PendingHistorySearch::Entry {
                         offset,
                         direction,
                         boundary_if_exhausted,
@@ -898,6 +935,7 @@ impl HistorySearchState {
 mod tests {
     use super::*;
     use crate::app_event::AppEvent;
+    use crate::app_event::HistoryBatchEntryResponse;
     use pretty_assertions::assert_eq;
     use tokio::sync::mpsc::unbounded_channel;
 
@@ -1251,13 +1289,22 @@ mod tests {
                 &tx,
             )
         );
-        let _ = rx.try_recv().expect("expected oldest lookup");
+        let AppEvent::LookupMessageHistoryBatch { end_offset, .. } =
+            rx.try_recv().expect("expected oldest batch")
+        else {
+            panic!("unexpected event variant");
+        };
+        assert_eq!(end_offset, 0);
         assert_eq!(
-            HistoryEntryResponse::Search(HistorySearchResult::AtBoundary),
-            history.on_entry_response(
+            Some(HistorySearchResult::AtBoundary),
+            history.on_batch_response(
                 /*log_id*/ 1,
-                /*offset*/ 0,
-                Some("also not a match".into()),
+                /*end_offset*/ 0,
+                vec![HistoryBatchEntryResponse {
+                    offset: 0,
+                    entry: Some("also not a match".into()),
+                }],
+                /*next_older_offset*/ None,
                 &tx,
             )
         );
@@ -1314,26 +1361,30 @@ mod tests {
                 &tx
             )
         );
-        let AppEvent::LookupMessageHistoryEntry {
+        let AppEvent::LookupMessageHistoryBatch {
             thread_id: response_thread_id,
-            offset,
+            end_offset,
             log_id,
         } = rx.try_recv().expect("expected next lookup")
         else {
             panic!("unexpected event variant");
         };
         assert_eq!(response_thread_id, thread_id);
-        assert_eq!(offset, 1);
+        assert_eq!(end_offset, 1);
         assert_eq!(log_id, 1);
 
         assert_eq!(
-            HistoryEntryResponse::Search(HistorySearchResult::Found(HistoryEntry::new(
-                "older command".to_string()
+            Some(HistorySearchResult::Found(HistoryEntry::new(
+                "OLDER command".to_string()
             ))),
-            history.on_entry_response(
+            history.on_batch_response(
                 /*log_id*/ 1,
-                /*offset*/ 1,
-                Some("older command".into()),
+                /*end_offset*/ 1,
+                vec![HistoryBatchEntryResponse {
+                    offset: 1,
+                    entry: Some("OLDER command".into()),
+                }],
+                /*next_older_offset*/ Some(0),
                 &tx
             )
         );
@@ -1388,25 +1439,30 @@ mod tests {
                 &tx,
             )
         );
-        let _ = rx.try_recv().expect("expected next lookup after duplicate");
+        let AppEvent::LookupMessageHistoryBatch { end_offset, .. } =
+            rx.try_recv().expect("expected next batch after duplicate")
+        else {
+            panic!("unexpected event variant");
+        };
+        assert_eq!(end_offset, 1);
         assert_eq!(
-            HistoryEntryResponse::Search(HistorySearchResult::Pending),
-            history.on_entry_response(
-                /*log_id*/ 1,
-                /*offset*/ 1,
-                Some("not a match".into()),
-                &tx,
-            )
-        );
-        let _ = rx.try_recv().expect("expected oldest lookup");
-        assert_eq!(
-            HistoryEntryResponse::Search(HistorySearchResult::Found(HistoryEntry::new(
+            Some(HistorySearchResult::Found(HistoryEntry::new(
                 "needle older".to_string()
             ))),
-            history.on_entry_response(
+            history.on_batch_response(
                 /*log_id*/ 1,
-                /*offset*/ 0,
-                Some("needle older".into()),
+                /*end_offset*/ 1,
+                vec![
+                    HistoryBatchEntryResponse {
+                        offset: 1,
+                        entry: Some("not a match".into()),
+                    },
+                    HistoryBatchEntryResponse {
+                        offset: 0,
+                        entry: Some("needle older".into()),
+                    },
+                ],
+                /*next_older_offset*/ None,
                 &tx,
             )
         );

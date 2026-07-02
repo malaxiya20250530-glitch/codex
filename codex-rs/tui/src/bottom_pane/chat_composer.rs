@@ -847,6 +847,26 @@ impl ChatComposer {
         }
     }
 
+    pub(crate) fn on_history_batch_response(
+        &mut self,
+        log_id: u64,
+        end_offset: usize,
+        entries: Vec<crate::app_event::HistoryBatchEntryResponse>,
+        next_older_offset: Option<usize>,
+    ) -> bool {
+        let Some(result) = self.history.on_batch_response(
+            log_id,
+            end_offset,
+            entries,
+            next_older_offset,
+            &self.app_event_tx,
+        ) else {
+            return false;
+        };
+        self.apply_history_search_result(result);
+        true
+    }
+
     pub(crate) fn record_replayed_user_message_history(&mut self, entry: HistoryEntry) {
         self.history.record_replayed_submission(entry);
     }
