@@ -521,7 +521,7 @@ impl ChatWidget {
                     (!response.already_added).then_some(marketplace_tab_id);
                 let message = if response.already_added {
                     format!(
-                        "Marketplace {} is already added.",
+                        codex_l10n::lookup_with_args("marketplace-added", &[("name", &format!("{}", marketplace))]),
                         response.marketplace_name
                     )
                 } else {
@@ -530,7 +530,7 @@ impl ChatWidget {
                 self.add_info_message(
                     message,
                     Some(format!(
-                        "Marketplace root: {}",
+                        codex_l10n::lookup_with_args("marketplace-root", &[("path", &format!("{}", installed_root.as_path().display()))]),
                         response.installed_root.as_path().display()
                     )),
                 );
@@ -626,7 +626,7 @@ impl ChatWidget {
                 if upgraded_count == 0 && error_count == 0 {
                     let message = if selected_count == 1 {
                         format!(
-                            "Marketplace {} is already up to date.",
+                            codex_l10n::lookup_with_args("marketplace-updated", &[("name", &format!("{}", marketplace))]),
                             response.selected_marketplaces[0]
                         )
                     } else {

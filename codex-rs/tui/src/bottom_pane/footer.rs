@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! The bottom-pane footer renders transient hints and context indicators.
 //!
 //! The footer is pure rendering: it formats `FooterProps` into `Line`s without mutating any state.
@@ -146,11 +147,11 @@ impl CollaborationModeIndicator {
             String::new()
         };
         match self {
-            CollaborationModeIndicator::Plan => format!("Plan mode{suffix}"),
+            CollaborationModeIndicator::Plan => format!("{}{}", tr!("plan-mode"), suffix),
             CollaborationModeIndicator::PairProgramming => {
-                format!("Pair Programming mode{suffix}")
+                format!("{}{}", tr!("pair-programming-mode"), suffix)
             }
-            CollaborationModeIndicator::Execute => format!("Execute mode{suffix}"),
+            CollaborationModeIndicator::Execute => format!("{}{}", tr!("execute-mode"), suffix),
         }
     }
 

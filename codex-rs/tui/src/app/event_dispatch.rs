@@ -1358,7 +1358,7 @@ impl App {
                 None => {
                     self.chat_widget
                         .add_to_history(history_cell::new_info_event(
-                            format!("Sandbox read access granted for {}", path.display()),
+                            format!(codex_l10n::lookup_with_args("sandbox-read-access", &[("path", &format!("{}", path.display()))]), path.display()),
                             /*hint*/ None,
                         ));
                 }
@@ -1473,7 +1473,7 @@ impl App {
                                     self.chat_widget.submit_initial_user_message_if_pending();
                                 }
                                 self.chat_widget.add_plain_history_lines(vec![
-                                    Line::from(vec!["• ".dim(), "Sandbox ready".into()]),
+                                    Line::from(vec!["• ".dim(), codex_l10n::lookup("sandbox-ready").into()]),
                                     Line::from(vec![
                                         "  ".into(),
                                         "Codex can now safely edit files and execute commands in your computer"
@@ -2070,7 +2070,7 @@ impl App {
                         crate::bottom_pane::format_requested_permissions_rule(&permissions)
                     {
                         lines.push(Line::from(vec![
-                            "Permission rule: ".into(),
+                            codex_l10n::lookup("permission-rule").into(),
                             rule_line.cyan(),
                         ]));
                     }

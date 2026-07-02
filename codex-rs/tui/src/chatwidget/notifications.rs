@@ -40,27 +40,21 @@ impl Notification {
                     .unwrap_or_else(|| "Agent turn complete".to_string())
             }
             Notification::ExecApprovalRequested { command } => {
-                format!(
-                    "Approval requested: {}",
-                    truncate_text(command, /*max_graphemes*/ 30)
-                )
+                codex_l10n::lookup_with_args("approval-requested", &[("details", &truncate_text(command, /*max_graphemes*/ 30))])
             }
             Notification::EditApprovalRequested { cwd, changes } => {
-                format!(
-                    "Codex wants to edit {}",
-                    if changes.len() == 1 {
-                        #[allow(clippy::unwrap_used)]
-                        display_path_for(changes.first().unwrap(), cwd)
-                    } else {
-                        format!("{} files", changes.len())
-                    }
-                )
+                if changes.len() == 1 {
+                    #[allow(clippy::unwrap_used)]
+                    codex_l10n::lookup_with_args("codex-wants-to-edit", &[("path", &display_path_for(changes.first().unwrap(), cwd))])
+                } else {
+                    codex_l10n::lookup_with_args("codex-wants-to-edit-multi", &[("count", &changes.len().to_string())])
+                }
             }
             Notification::ElicitationRequested { server_name } => {
-                format!("Approval requested by {server_name}")
+                codex_l10n::lookup_with_args("approval-requested-by", &[("name", server_name)])
             }
             Notification::PlanModePrompt { title } => {
-                format!("Plan mode prompt: {title}")
+                codex_l10n::lookup_with_args("plan-mode-prompt", &[("title", title)])
             }
         }
     }

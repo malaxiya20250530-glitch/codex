@@ -1,3 +1,4 @@
+use codex_l10n::tr;
 //! Approval modal rendering and decision routing for high-risk operations.
 //!
 //! This module converts agent approval requests (exec/apply-patch/MCP
@@ -706,7 +707,7 @@ fn build_header(request: &ApprovalRequest) -> Box<dyn Renderable> {
                 && let Some(rule_line) = format_additional_permissions_rule(additional_permissions)
             {
                 header.push(Line::from(vec![
-                    "Permission rule: ".into(),
+                    tr!("permission-rule").into(),
                     rule_line.cyan(),
                 ]));
                 header.push(Line::from(""));
@@ -749,7 +750,7 @@ fn build_header(request: &ApprovalRequest) -> Box<dyn Renderable> {
             }
             if let Some(rule_line) = format_requested_permissions_rule(permissions) {
                 header.push(Line::from(vec![
-                    "Permission rule: ".into(),
+                    tr!("permission-rule").into(),
                     rule_line.cyan(),
                 ]));
             }
@@ -863,9 +864,9 @@ fn exec_options(
         .filter_map(|decision| match decision {
             CommandExecutionApprovalDecision::Accept => Some(ApprovalOption {
                 label: if network_approval_context.is_some() {
-                    "Yes, just this once".to_string()
+                    tr!("yes-just-once").to_string()
                 } else {
-                    "Yes, proceed".to_string()
+                    tr!("yes-proceed").to_string()
                 },
                 decision: ApprovalDecision::Command(CommandExecutionApprovalDecision::Accept),
                 shortcuts: keymap.approve.clone(),
@@ -927,7 +928,7 @@ fn exec_options(
                 })
             }
             CommandExecutionApprovalDecision::Decline => Some(ApprovalOption {
-                label: "No, continue without running it".to_string(),
+                label: tr!("no-continue").to_string(),
                 decision: ApprovalDecision::Command(CommandExecutionApprovalDecision::Decline),
                 shortcuts: keymap.deny.clone(),
             }),
@@ -1038,7 +1039,7 @@ fn path_label(base: &str, subpath: &Option<PathBuf>) -> String {
 fn patch_options(keymap: &ApprovalKeymap) -> Vec<ApprovalOption> {
     vec![
         ApprovalOption {
-            label: "Yes, proceed".to_string(),
+            label: tr!("yes-proceed").to_string(),
             decision: ApprovalDecision::FileChange(FileChangeApprovalDecision::Accept),
             shortcuts: keymap.approve.clone(),
         },
@@ -1065,24 +1066,24 @@ fn permissions_options(keymap: &ApprovalKeymap) -> Vec<ApprovalOption> {
 
     vec![
         ApprovalOption {
-            label: "Yes, grant these permissions for this turn".to_string(),
+            label: tr!("yes-grant-turn").to_string(),
             decision: ApprovalDecision::Permissions(PermissionsDecision::GrantForTurn),
             shortcuts: keymap.approve.clone(),
         },
         ApprovalOption {
-            label: "Yes, grant for this turn with strict auto review".to_string(),
+            label: tr!("yes-grant-strict").to_string(),
             decision: ApprovalDecision::Permissions(
                 PermissionsDecision::GrantForTurnWithStrictAutoReview,
             ),
             shortcuts: vec![key_hint::plain(KeyCode::Char('r'))],
         },
         ApprovalOption {
-            label: "Yes, grant these permissions for this session".to_string(),
+            label: tr!("yes-grant-session").to_string(),
             decision: ApprovalDecision::Permissions(PermissionsDecision::GrantForSession),
             shortcuts: keymap.approve_for_session.clone(),
         },
         ApprovalOption {
-            label: "No, continue without permissions".to_string(),
+            label: tr!("no-continue-no-perms").to_string(),
             decision: ApprovalDecision::Permissions(PermissionsDecision::Deny),
             shortcuts: deny_shortcuts,
         },
@@ -1123,7 +1124,7 @@ fn elicitation_options(keymap: &ApprovalKeymap) -> Vec<ApprovalOption> {
             shortcuts: decline_shortcuts,
         },
         ApprovalOption {
-            label: "Cancel this request".to_string(),
+            label: tr!("cancel-request").to_string(),
             decision: ApprovalDecision::McpElicitation(McpServerElicitationAction::Cancel),
             shortcuts: cancel_shortcuts,
         },
@@ -1746,7 +1747,7 @@ mod tests {
         assert_eq!(
             labels,
             vec![
-                "Yes, just this once".to_string(),
+                tr!("yes-just-once").to_string(),
                 "Yes, and allow this host for this conversation".to_string(),
                 "Yes, and allow this host in the future".to_string(),
                 "No, and tell Codex what to do differently".to_string(),
@@ -1772,7 +1773,7 @@ mod tests {
         assert_eq!(
             labels,
             vec![
-                "Yes, proceed".to_string(),
+                tr!("yes-proceed").to_string(),
                 "Yes, and don't ask again for this command in this session".to_string(),
                 "No, and tell Codex what to do differently".to_string(),
             ]
@@ -1806,7 +1807,7 @@ mod tests {
         assert_eq!(
             labels,
             vec![
-                "Yes, proceed".to_string(),
+                tr!("yes-proceed").to_string(),
                 "No, and tell Codex what to do differently".to_string(),
             ]
         );
@@ -1822,10 +1823,10 @@ mod tests {
         assert_eq!(
             labels,
             vec![
-                "Yes, grant these permissions for this turn".to_string(),
-                "Yes, grant for this turn with strict auto review".to_string(),
-                "Yes, grant these permissions for this session".to_string(),
-                "No, continue without permissions".to_string(),
+                tr!("yes-grant-turn").to_string(),
+                tr!("yes-grant-strict").to_string(),
+                tr!("yes-grant-session").to_string(),
+                tr!("no-continue-no-perms").to_string(),
             ]
         );
     }

@@ -1,0 +1,7 @@
+load("//:defs.bzl", "codex_rust_crate")
+
+codex_rust_crate(
+    name = "l10n",
+    crate_name = "codex_l10n",
+    compile_data = glob(["src/locales/*"]),
+)

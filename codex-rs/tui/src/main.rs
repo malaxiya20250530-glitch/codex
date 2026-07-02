@@ -48,6 +48,7 @@ struct TopCli {
 }
 
 fn main() -> anyhow::Result<()> {
+    codex_l10n::init_from_env();
     arg0_dispatch_or_else(|arg0_paths: Arg0DispatchPaths| async move {
         let top_cli = TopCli::parse();
         let mut inner = top_cli.inner;
